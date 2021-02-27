@@ -7,7 +7,9 @@ fun File.writeWithBreakLine(text: String) {
 }
 
 class JackTokenizer (input: File){
-    val bufferedReader : BufferedReader = input.bufferedReader()
+    val bufferedReader: BufferedReader = input.bufferedReader()
+    private var tokenList: MutableList<String> = mutableListOf()
+    var currentToken: String = ""
 
     enum class TokenType (val tokenName: String){
         KEYWORD("keyword"), SYMBOL("symbol"), IDENTIFIER("identifier"), STRING_CONSTANT("string_constant"), INT_CONSTANT("int_constant")
@@ -58,15 +60,60 @@ class JackTokenizer (input: File){
         NOT("~")
     }
 
-    private var tokenList : MutableList<String> = mutableListOf()
-    var currentToken: String = ""
+    init {
+        var multLineComment = false
+        var line = nextLine()
+        while (line != null) {
+            var hasTokensBefComment = false
+            if(line.isEmpty()) {
+                line = nextLine()
+                continue
+            }
 
+            val multLineBegin = line.indexOf("/*") //retorna -1 se o elemento nao for encontrado
+            val multLineEnd = line.indexOf("*/")
+
+            if(multLineBegin != -1 && multLineEnd == -1) {  //multLineComment começando com /*
+                line = line.substringBefore("/*")
+                multLineComment = true
+                if(line.isNotEmpty()) hasTokensBefComment = true
+                else {
+                    line = nextLine()
+                    continue
+                }
+            }
+
+            if(multLineBegin == -1 && multLineEnd != -1){    //multLineComment terminando com */
+                line = line.substringAfter("*/")
+                multLineComment = false
+            }
+
+            if (multLineBegin != -1 && multLineEnd != -1) {                                     //para o caso de comment do tipo /**/ em uma mesma linha.
+                line = line.replaceRange(multLineBegin, multLineEnd+2, " ")
+            }
+
+            if(multLineComment && !hasTokensBefComment) { // comentarios de varias linhas apenas com //
+                line = nextLine()
+                continue
+            }
+
+            val stringLine = line.split("\"")
+            for (i in stringLine.indices) {
+                if (i % 2 != 0){
+                    tokenList.add("\"${stringLine[i]}\"")
+                    continue
+                }
+                val trimLine = replaceEmptySpace(stringLine[i])
+                trimLine.split(" ").filterNot { it.isEmpty() }.forEach { word -> splitSymbol(word, tokenList) }
+            }
+            line = nextLine()
+        }
+    }
 
     fun hasMoreTokens() : Boolean {
         return tokenList.isNotEmpty()
     }
 
-    //tokenList precisa ser incrementado. Fazer isso amanha!
     fun advance() {
         currentToken = tokenList.first()
         tokenList.removeAt(0)
@@ -121,39 +168,33 @@ class JackTokenizer (input: File){
         return pattern.containsMatchIn(token)
     }
 
+    fun replaceEmptySpace(value: String) : String {
+        val pattern = Regex("(\\s)+")
+        return pattern.replace(value, " ")
+    }
     fun nextLine() : String? {
         return bufferedReader.readLine()?.trim()?.substringBefore("//")
     }
 
+    private fun splitSymbol (word: String, tokenList: MutableList<String>) {
+        val symbolIndex = word.indexOfFirst { isInEnumSymbol(it.toString()) }
+        if (word.length == 1 || symbolIndex == -1){
+            tokenList.add(word)
+            return
+        }
+        val token = if (symbolIndex == 0 ) {
+            word.first().toString()
+        } else {
+            word.substring(0, symbolIndex)
+        }
+
+        val restante = if (symbolIndex == 0) {
+            word.substring(1)
+        } else {
+            word.substring(symbolIndex)
+        }
+        tokenList.add(token)
+        splitSymbol(restante, tokenList)
+    }
+
 }
-
-/*
-
-fun main() {
-    */
-/*val symbols: List<Byte> = listOf(
-        '{', '}', '(', ')', '[', ']', '.', ',', ';',
-        '+', '-', '*', '/', '&', '|', '<', '>', '=', '~'
-    ).map(Char::toByte)
-    println(symbols)*//*
-
-
-   */
-/* var testando = JackTokenizer("teste")
-    *//*
-*/
-/*println(testando.isIdentifier("huateste12"))
-    println(JackTokenizer.TokenType.KEYWORD.tokenName)
-    println(JackTokenizer.TokenType.KEYWORD)
-    "teste".contains('t')*//*
-*/
-/*
-    println(testando.tokenType("="))
-    println(testando.tokenType("class"))
-    println(testando.tokenType("-"))
-    println(testando.tokenType("\"constructor\""))
-    println(testando.tokenType("name123_teste"))
-    println(testando.tokenType("teste_id2"))*//*
-
-    //println(testando.tokenType("123_name123")) // identifier invalido. Variavel nao pode comecar por numero
-}*/

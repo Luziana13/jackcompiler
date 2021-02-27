@@ -6,20 +6,15 @@ fun main() {
 }
 
 fun compile(inputArq: File) {
-    val tempArq = File(inputArq.parent + "/" + inputArq.nameWithoutExtension + "_temp.xml")
+    val tempArq = File(inputArq.parent + "/" + inputArq.nameWithoutExtension + ".xml")
     if (tempArq.exists()) tempArq.delete()
-    val outputArq = File(inputArq.parent + "/" + inputArq.nameWithoutExtension + ".xml")
-    if(outputArq.exists()) outputArq.delete()
-    val compiler = tokenize(inputArq, tempArq)
-    println(compiler)
+    tokenize(inputArq, tempArq)
 }
 
 fun tokenize(inputArq: File, tempArq: File) {
     val tokenizer = JackTokenizer(inputArq)
-    println(tokenizer.bufferedReader.readLine()?.trim()?.substringBefore("//"))
     tempArq.writeWithBreakLine("<tokens>")
         while(tokenizer.hasMoreTokens()) {
-            println("tem mais tokens")
             tokenizer.advance()
             when(tokenizer.tokenType()) {
                 JackTokenizer.TokenType.IDENTIFIER -> {
