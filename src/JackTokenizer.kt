@@ -20,7 +20,7 @@ class JackTokenizer (input: File){
         CLASS("class"),
         CONSTRUCTOR("constructor"),
         DO("do"),
-        ELSE("do"),
+        ELSE("else"),
         FALSE("false"),
         FUNCTION("function"),
         FIELD("field"),
