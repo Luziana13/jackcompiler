@@ -119,6 +119,10 @@ class JackTokenizer (input: File){
         tokenList.removeAt(0)
     }
 
+    fun nextToken(): String{
+        return tokenList.first()
+    }
+
     fun tokenType(): TokenType {
         return when {
             isInEnumIdentifier(currentToken) -> TokenType.KEYWORD

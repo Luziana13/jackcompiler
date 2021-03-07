@@ -154,12 +154,51 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
         }
         outputFile.writeWithBreakLine(endTag(TagName.PARAMETER_LIST.value))
     }
-    fun compileVarDec() {
-
+    private fun compileVarDec() {
+        outputFile.writeWithBreakLine(initTag(TagName.VAR_DEC.value))
+        outputFile.writeWithBreakLine(xmlTag(TagName.KEYWORD, tokenizer.keyWord()))
+        while (tokenizer.hasMoreTokens()){
+            tokenizer.advance()
+            when(tokenizer.tokenType()) {
+                JackTokenizer.TokenType.KEYWORD -> {
+                    when(val key = tokenizer.keyWord()) {
+                        JackTokenizer.Keyword.INT.keywordName, JackTokenizer.Keyword.CHAR.keywordName, JackTokenizer.Keyword.BOOLEAN.keywordName -> outputFile.writeWithBreakLine(xmlTag(TagName.KEYWORD, key))
+                    }
+                }
+                JackTokenizer.TokenType.SYMBOL -> {
+                    when(val sym = tokenizer.symbol().toString()){
+                        JackTokenizer.Symbol.SEMICOLON.symbolIcon -> {
+                            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                            break
+                        }
+                        JackTokenizer.Symbol.COMMA.symbolIcon -> outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                    }
+                }
+                JackTokenizer.TokenType.IDENTIFIER -> outputFile.writeWithBreakLine(xmlTag(TagName.IDENTIFIER, tokenizer.identifier()))
+                else -> throw IllegalArgumentException()
+            }
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.VAR_DEC.value))
     }
 
-    fun compileStatements() {
-
+    private fun compileStatements() {
+        outputFile.writeWithBreakLine(initTag(TagName.STATEMENTS.value))
+        while (tokenizer.hasMoreTokens()){
+            when(tokenizer.tokenType()) {
+                JackTokenizer.TokenType.KEYWORD -> when(tokenizer.keyWord()) {
+                    JackTokenizer.Keyword.LET.keywordName -> compileLet()
+                    JackTokenizer.Keyword.IF.keywordName -> compileIf()
+                    JackTokenizer.Keyword.WHILE.keywordName -> compileWhile()
+                    JackTokenizer.Keyword.DO.keywordName -> compileDo()
+                    JackTokenizer.Keyword.RETURN.keywordName -> compileReturn()
+                    else -> throw IllegalArgumentException()
+                }
+                else -> throw IllegalArgumentException()
+            }
+            if(!setStatements.contains(tokenizer.nextToken())) break
+            tokenizer.advance()
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.STATEMENTS.value))
     }
 
     fun compileDo() {
