@@ -254,16 +254,51 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
 
     }
 
-    fun compileReturn() {
-
+    private fun compileReturn() {
+        outputFile.writeWithBreakLine(initTag(TagName.RETURN_STATEMENT.value))
+        outputFile.writeWithBreakLine(xmlTag(TagName.KEYWORD, tokenizer.keyWord()))
+        tokenizer.advance()
+        if(tokenizer.tokenType() != JackTokenizer.TokenType.SYMBOL || tokenizer.symbol().toString() != JackTokenizer.Symbol.SEMICOLON.symbolIcon){
+            compileExpression()
+            tokenizer.advance()
+        }
+        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+        outputFile.writeWithBreakLine(endTag(TagName.RETURN_STATEMENT.value))
     }
 
     fun compileIf() {
 
     }
 
-    fun compileWhile() {
-
+    private fun compileWhile() {
+        outputFile.writeWithBreakLine(initTag(TagName.WHILE_STATEMENT.value))
+        outputFile.writeWithBreakLine(xmlTag(TagName.KEYWORD, tokenizer.keyWord()))
+        while (tokenizer.hasMoreTokens()){
+            tokenizer.advance()
+            when(tokenizer.tokenType()){
+                JackTokenizer.TokenType.SYMBOL -> {
+                    when(val sym = tokenizer.symbol().toString()){
+                        JackTokenizer.Symbol.LPAREN.symbolIcon -> {
+                            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                            tokenizer.advance()
+                            compileExpression()
+                            tokenizer.advance()
+                            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                        }
+                        JackTokenizer.Symbol.LBRACE.symbolIcon -> {
+                            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                            tokenizer.advance()
+                            compileStatements()
+                            tokenizer.advance()
+                            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                            break
+                        }
+                    }
+                }
+                else -> throw IllegalArgumentException()
+            }
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.WHILE_STATEMENT.value))
     }
 
     private fun compileExpression() {
