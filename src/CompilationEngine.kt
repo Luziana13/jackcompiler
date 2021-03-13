@@ -1,6 +1,5 @@
 import java.io.File
 import java.lang.IllegalArgumentException
-import javax.swing.text.html.HTML
 
 class CompilationEngine (inputFile: File, private  val outputFile: File){
     private val tokenizer = JackTokenizer(inputFile)
@@ -126,7 +125,7 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
         outputFile.writeWithBreakLine(endTag(TagName.SUBROUTINE_DEC.value))
     }
 
-    fun compileParameterList() {
+    private fun compileParameterList() {
         outputFile.writeWithBreakLine(initTag(TagName.PARAMETER_LIST.value))
         if (tokenizer.tokenType() == JackTokenizer.TokenType.SYMBOL && tokenizer.symbol()
                 .toString() == JackTokenizer.Symbol.RPAREN.symbolIcon
@@ -267,8 +266,17 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
 
     }
 
-    fun compileExpression() {
-
+    private fun compileExpression() {
+        outputFile.writeWithBreakLine(initTag(TagName.EXPRESSION.value))
+        compileTerm()
+        while (tokenizer.hasMoreTokens()) {
+            if(!opSymbols.contains(tokenizer.nextToken())) break
+            tokenizer.advance()
+            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, removeProblematicSymbol(tokenizer.symbol().toString())))
+            tokenizer.advance()
+            compileTerm()
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.EXPRESSION.value))
     }
 
     private fun compileExpressionList() {
@@ -289,12 +297,79 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
         outputFile.writeWithBreakLine(endTag(TagName.EXPRESSION_LIST.value))
     }
 
-    fun compileTerm() {
-
+    private fun compileTerm() {
+        outputFile.writeWithBreakLine(initTag(TagName.TERM.value))
+        when(tokenizer.tokenType()) {
+            JackTokenizer.TokenType.KEYWORD -> {
+                when (val key = tokenizer.keyWord()) {
+                    JackTokenizer.Keyword.TRUE.keywordName, JackTokenizer.Keyword.FALSE.keywordName, JackTokenizer.Keyword.NULL.keywordName, JackTokenizer.Keyword.THIS.keywordName -> {
+                        outputFile.writeWithBreakLine(xmlTag(TagName.KEYWORD, key))
+                    }
+                    else -> throw IllegalArgumentException()
+                }
+            }
+            JackTokenizer.TokenType.SYMBOL -> {
+                when (val sym = tokenizer.symbol().toString()) {
+                    JackTokenizer.Symbol.MINUS.symbolIcon, JackTokenizer.Symbol.NOT.symbolIcon -> {
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                        tokenizer.advance()
+                        compileTerm()
+                    }
+                    JackTokenizer.Symbol.LPAREN.symbolIcon -> {
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                        tokenizer.advance()
+                        compileExpression()
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                    }
+                }
+            }
+            JackTokenizer.TokenType.IDENTIFIER -> {
+                outputFile.writeWithBreakLine(xmlTag(TagName.IDENTIFIER, tokenizer.identifier()))
+                when(tokenizer.nextToken()){
+                    JackTokenizer.Symbol.LBRACKET.symbolIcon -> {
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                        tokenizer.advance()
+                        compileExpression()
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                    }
+                    JackTokenizer.Symbol.LPAREN.symbolIcon -> {
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                        compileExpressionList()
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                    }
+                    JackTokenizer.Symbol.DOT.symbolIcon -> {
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.IDENTIFIER, tokenizer.identifier()))
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                        compileExpressionList()
+                        tokenizer.advance()
+                        outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                    }
+                }
+            }
+            JackTokenizer.TokenType.INT_CONSTANT -> outputFile.writeWithBreakLine(xmlTag(TagName.INTEGER_CONSTANT, tokenizer.intVal().toString()))
+            JackTokenizer.TokenType.STRING_CONSTANT -> outputFile.writeWithBreakLine(xmlTag(TagName.STRING_CONSTANT, tokenizer.stringVal()))
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.TERM.value))
     }
 
     private fun initTag(value: String) = "<$value>"
     private fun endTag(value: String) = "</$value>"
     private fun xmlTag(tagName: TagName, value: String): String = initTag(tagName.value) + value + endTag(tagName.value)
-
+    private fun removeProblematicSymbol(sym: String): String {
+        return when (sym){
+            JackTokenizer.Symbol.LT.symbolIcon -> "&lt;"
+            JackTokenizer.Symbol.RT.symbolIcon -> "&gt;"
+            JackTokenizer.Symbol.AND.symbolIcon -> "&amp;"
+            else -> sym
+        }
+    }
 }
