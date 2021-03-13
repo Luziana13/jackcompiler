@@ -1,5 +1,6 @@
 import java.io.File
 import java.lang.IllegalArgumentException
+import javax.swing.text.html.HTML
 
 class CompilationEngine (inputFile: File, private  val outputFile: File){
     private val tokenizer = JackTokenizer(inputFile)
@@ -201,8 +202,53 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
         outputFile.writeWithBreakLine(endTag(TagName.STATEMENTS.value))
     }
 
-    fun compileDo() {
-
+    private fun compileDo() {
+        outputFile.writeWithBreakLine(initTag(TagName.DO_STATEMENT.value))
+        outputFile.writeWithBreakLine(xmlTag(TagName.KEYWORD, tokenizer.keyWord()))
+        while (tokenizer.hasMoreTokens()){
+            tokenizer.advance()
+            when(tokenizer.tokenType()){
+                JackTokenizer.TokenType.SYMBOL -> {
+                    when(val sym = tokenizer.symbol().toString()){
+                        JackTokenizer.Symbol.SEMICOLON.symbolIcon ->{
+                            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                            break
+                        }
+                    }
+                }
+                JackTokenizer.TokenType.IDENTIFIER -> {
+                    outputFile.writeWithBreakLine(xmlTag(TagName.IDENTIFIER, tokenizer.identifier()))
+                    tokenizer.advance()
+                    when(tokenizer.tokenType()){
+                        JackTokenizer.TokenType.SYMBOL -> {
+                            when(val sym = tokenizer.symbol().toString()){
+                                JackTokenizer.Symbol.LPAREN.symbolIcon -> {
+                                    outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                                    compileExpressionList()
+                                    tokenizer.advance()
+                                    outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                                }
+                                JackTokenizer.Symbol.DOT.symbolIcon -> {
+                                    outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
+                                    tokenizer.advance()
+                                    outputFile.writeWithBreakLine(xmlTag(TagName.IDENTIFIER, tokenizer.identifier()))
+                                    tokenizer.advance()
+                                    outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                                }
+                                else ->{
+                                    outputFile.writeWithBreakLine(endTag(TagName.DO_STATEMENT.value))
+                                    outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL,tokenizer.symbol().toString()))
+                                    return
+                                }
+                            }
+                        }
+                        else -> throw IllegalArgumentException()
+                    }
+                }
+                else -> throw IllegalArgumentException()
+            }
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.DO_STATEMENT.value))
     }
 
     fun compileLet() {
@@ -225,8 +271,22 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
 
     }
 
-    fun compileExpressionList() {
-
+    private fun compileExpressionList() {
+        outputFile.writeWithBreakLine(initTag(TagName.EXPRESSION_LIST.value))
+        if(tokenizer.nextToken() == JackTokenizer.Symbol.RPAREN.symbolIcon || tokenizer.nextToken() == JackTokenizer.Symbol.RBRACKET.symbolIcon){
+            outputFile.writeWithBreakLine(endTag(TagName.EXPRESSION_LIST.value))
+            return
+        }
+        tokenizer.advance()
+        compileExpression()
+        while (tokenizer.hasMoreTokens()){
+            if(tokenizer.nextToken() != JackTokenizer.Symbol.COMMA.symbolIcon) break
+            tokenizer.advance()
+            outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+            tokenizer.advance()
+            compileExpression()
+        }
+        outputFile.writeWithBreakLine(endTag(TagName.EXPRESSION_LIST.value))
     }
 
     fun compileTerm() {
