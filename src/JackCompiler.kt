@@ -8,7 +8,9 @@ fun main() {
 fun compile(inputArq: File) {
     val tempArq = File(inputArq.parent + "/" + inputArq.nameWithoutExtension + ".xml")
     if (tempArq.exists()) tempArq.delete()
-    tokenize(inputArq, tempArq)
+    //tokenize(inputArq, tempArq)
+    val compiler = CompilationEngine(inputArq, tempArq)
+    compiler.compileClass()
 }
 
 fun tokenize(inputArq: File, tempArq: File) {
