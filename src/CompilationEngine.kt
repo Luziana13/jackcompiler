@@ -483,7 +483,7 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
 
     private fun initTag(value: String) = "<$value>"
     private fun endTag(value: String) = "</$value>"
-    private fun xmlTag(tagName: TagName, value: String): String = initTag(tagName.value) + value + endTag(tagName.value)
+    private fun xmlTag(tagName: TagName, value: String): String = initTag(tagName.value) + " $value " + endTag(tagName.value)
     private fun removeProblematicSymbol(sym: String): String {
         return when (sym){
             JackTokenizer.Symbol.LT.symbolIcon -> "&lt;"
