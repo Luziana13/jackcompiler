@@ -4,17 +4,17 @@ import java.io.IOException
 
 fun main() {
     var i = 0
-    var diretorio = "";
+    var diretorio = ""
     try {
-        diretorio = File(".").canonicalPath;
+        diretorio = File(".").canonicalPath
     } catch (e: IOException) {
         e.printStackTrace()
     }
-    val arq = File(diretorio + "/arquivosJack");
+    val arq = File("$diretorio/arquivosJack")
     val arquivos = arq.listFiles()
-    while (i != arquivos.size) {
-        if(arquivos[i].extension.equals("jack")){
-            compile(arquivos[i]);
+    while (arquivos?.isNotEmpty() == true && i != arquivos.size) {
+        if(arquivos[i].extension == "jack"){
+            compile(arquivos[i])
         }
         i++
     }
@@ -22,10 +22,12 @@ fun main() {
 }
 
 fun compile(inputArq: File) {
-    val tempArq = File(inputArq.parent + "/" + inputArq.nameWithoutExtension + ".xml")
+    val tempArq = File("${inputArq.parent}/${inputArq.nameWithoutExtension}T.xml")
     if (tempArq.exists()) tempArq.delete()
-    //tokenize(inputArq, tempArq)
-    val compiler = CompilationEngine(inputArq, tempArq)
+    val outArq = File("${inputArq.parent}/${inputArq.nameWithoutExtension}.xml")
+    if (tempArq.exists()) tempArq.delete()
+    val compiler = CompilationEngine(inputArq, outArq)
+    tokenize(inputArq, tempArq)
     compiler.compileClass()
 }
 
