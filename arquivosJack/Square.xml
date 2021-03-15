@@ -315,7 +315,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <returnStatement>
 <keyword> return </keyword>
@@ -377,7 +377,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <returnStatement>
 <keyword> return </keyword>
@@ -521,7 +521,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <returnStatement>
 <keyword> return </keyword>
@@ -665,7 +665,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <returnStatement>
 <keyword> return </keyword>
@@ -809,7 +809,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <returnStatement>
 <keyword> return </keyword>
@@ -953,7 +953,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <returnStatement>
 <keyword> return </keyword>

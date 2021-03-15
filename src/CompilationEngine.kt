@@ -187,6 +187,10 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
                 .toString() == JackTokenizer.Symbol.RBRACE.symbolIcon //serve para tratar statements sem conteudo.
         ) {
             outputFile.writeWithBreakLine(endTag(TagName.STATEMENTS.value))
+
+            if (tokenizer.currentToken == JackTokenizer.Symbol.RBRACE.symbolIcon && tokenizer.nextToken() == JackTokenizer.Keyword.ELSE.keywordName){
+                outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.currentToken))
+            }
             return
         }
         while (tokenizer.hasMoreTokens()){
@@ -322,8 +326,12 @@ class CompilationEngine (inputFile: File, private  val outputFile: File){
                             outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, sym))
                             tokenizer.advance()
                             compileStatements()
-                            if(tokenizer.symbol().toString() != JackTokenizer.Symbol.LBRACE.symbolIcon){
+                            if(tokenizer.nextToken() == JackTokenizer.Symbol.RBRACE.symbolIcon){
+                                tokenizer.advance()
                                 outputFile.writeWithBreakLine(xmlTag(TagName.SYMBOL, tokenizer.symbol().toString()))
+                                outputFile.writeWithBreakLine(endTag(TagName.IF_STATEMENT.value))
+                               // tokenizer.advance()
+                                return
                             }
                             tokenizer.advance()
                             break

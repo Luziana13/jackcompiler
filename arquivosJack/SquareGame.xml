@@ -140,7 +140,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -165,7 +165,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -190,7 +190,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -215,7 +215,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <doStatement>
 <keyword> do </keyword>
@@ -343,7 +343,7 @@
 <symbol> ; </symbol>
 </letStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -368,7 +368,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -393,7 +393,7 @@
 <symbol> ; </symbol>
 </doStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -418,7 +418,7 @@
 <symbol> ; </symbol>
 </letStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -443,7 +443,7 @@
 <symbol> ; </symbol>
 </letStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -468,7 +468,7 @@
 <symbol> ; </symbol>
 </letStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <ifStatement>
 <keyword> if </keyword>
@@ -493,7 +493,7 @@
 <symbol> ; </symbol>
 </letStatement>
 </statements>
-<symbol> ; </symbol>
+<symbol> } </symbol>
 </ifStatement>
 <whileStatement>
 <keyword> while </keyword>
