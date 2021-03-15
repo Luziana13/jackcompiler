@@ -1,8 +1,24 @@
 import java.io.File
+import java.io.IOException
+
 
 fun main() {
-    val input = File("D:\\Kotlin\\jackcompiler\\Main.jack")
-    compile(input)
+    var i = 0
+    var diretorio = "";
+    try {
+        diretorio = File(".").canonicalPath;
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    val arq = File(diretorio + "/arquivosJack");
+    val arquivos = arq.listFiles()
+    while (i != arquivos.size) {
+        if(arquivos[i].extension.equals("jack")){
+            compile(arquivos[i]);
+        }
+        i++
+    }
+
 }
 
 fun compile(inputArq: File) {
