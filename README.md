@@ -1,5 +1,4 @@
 # jackcompiler
-disciplina compiladores-UFMA
 
 Código em Kotlin para a disciplina de Compiladores, do curso de Engenharia da Computação da Universidade Federal do Maranhão, em que se implementa um compilador para a linguagem Jack, conforme diretrizes especificadas no projeto nand2tetris.
 
