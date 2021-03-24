@@ -1,24 +1,14 @@
 import java.io.File
-import java.io.IOException
+import java.lang.IllegalArgumentException
 
-
-fun main() {
-    var i = 0
-    var diretorio = ""
-    try {
-        diretorio = File(".").canonicalPath
-    } catch (e: IOException) {
-        e.printStackTrace()
+fun main(vararg args: String) {
+    val arq = File(args[0])
+    if(arq.isDirectory) {
+        val files = arq.listFiles {file -> file.extension == "jack"} ?: throw IllegalArgumentException()
+        files.forEach { inputArq -> compile(inputArq) }
+    } else{
+        compile(arq)
     }
-    val arq = File("$diretorio/arquivosJack")
-    val arquivos = arq.listFiles()
-    while (arquivos?.isNotEmpty() == true && i != arquivos.size) {
-        if(arquivos[i].extension == "jack"){
-            compile(arquivos[i])
-        }
-        i++
-    }
-
 }
 
 fun compile(inputArq: File) {

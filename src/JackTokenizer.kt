@@ -7,7 +7,7 @@ fun File.writeWithBreakLine(text: String) {
 }
 
 class JackTokenizer (input: File){
-    val bufferedReader: BufferedReader = input.bufferedReader()
+    private val bufferedReader: BufferedReader = input.bufferedReader()
     private var tokenList: MutableList<String> = mutableListOf()
     var currentToken: String = ""
 
@@ -134,11 +134,11 @@ class JackTokenizer (input: File){
         }
     }
 
-    fun isInEnumIdentifier(value: String?): Boolean {
+    private fun isInEnumIdentifier(value: String?): Boolean {
         return Arrays.stream(Keyword.values()).anyMatch { e -> e.keywordName == value }
     }
 
-    fun isInEnumSymbol(value: String?): Boolean{
+    private fun isInEnumSymbol(value: String?): Boolean{
         return Arrays.stream(Symbol.values()).anyMatch{e -> e.symbolIcon == value}
     }
 
@@ -162,21 +162,21 @@ class JackTokenizer (input: File){
         return currentToken.trim('"')
     }
 
-    fun isInteger(token: String): Boolean {
+    private fun isInteger(token: String): Boolean {
         val pattern = Regex("^0$|^[1-9][0-9]*$")
         return pattern.containsMatchIn(token)
     }
 
-    fun isIdentifier(token: String): Boolean {
+    private fun isIdentifier(token: String): Boolean {
         val pattern = Regex("^([a-z]|[A-Z_])([a-z]|[A-Z_\\w])*$")
         return pattern.containsMatchIn(token)
     }
 
-    fun replaceEmptySpace(value: String) : String {
+    private fun replaceEmptySpace(value: String) : String {
         val pattern = Regex("(\\s)+")
         return pattern.replace(value, " ")
     }
-    fun nextLine() : String? {
+    private fun nextLine() : String? {
         return bufferedReader.readLine()?.trim()?.substringBefore("//")
     }
 
