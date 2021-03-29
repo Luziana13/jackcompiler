@@ -31,6 +31,11 @@ enum class TagName (val value: String) {
     EXPRESSION_LIST("expressionList"),
     OP("op"),
     UNARY_OP("unaryOp"),
-    KEYWORD_CONSTANT("keywordConstant")
+    KEYWORD_CONSTANT("keywordConstant"),
+    STATIC("static"),
+    FIELD("field"),
+    ARG("argument"),
+    VAR("local"),
+    NONE("none");
 
 }
