@@ -70,7 +70,7 @@ class VMWriter (private val outputFile: File){
             outputFile.writeWithBreakLine("call $name $nArgs")
         }
 
-        fun writeFunctions(name: String, nLocals: Int){
+        fun writeFunction(name: String, nLocals: Int){
             outputFile.writeWithBreakLine("function $name $nLocals")
         }
 

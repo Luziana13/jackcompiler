@@ -3,8 +3,6 @@ import java.lang.IllegalArgumentException
 
 class CompilationEngineXML (inputFile: File, private  val outputFile: File){
     private val tokenizer = JackTokenizer(inputFile)
-    private val symTable = SymbolTable()
-    private val vmWriter = VMWriter(outputFile)
     private val opSymbols: Set<String> = setOf(JackTokenizer.Symbol.PLUS.symbolIcon,
                                                JackTokenizer.Symbol.MINUS.symbolIcon,
                                                JackTokenizer.Symbol.ASTERISK.symbolIcon,

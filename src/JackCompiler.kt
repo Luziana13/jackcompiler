@@ -16,8 +16,12 @@ fun compile(inputArq: File) {
     if (tempArq.exists()) tempArq.delete()
     val outArq = File("${inputArq.parent}/${inputArq.nameWithoutExtension}.xml")
     if (outArq.exists()) outArq.delete()
-    val compiler = CompilationEngineXML(inputArq, outArq)
+    val outputArq = File("${inputArq.parent}/${inputArq.nameWithoutExtension}.vm")
+    if(outputArq.exists()) outputArq.delete()
+    //val parser = CompilationEngineXML(inputArq, outArq)
+    val compiler = CompilationEngine(inputArq, outputArq)
     tokenize(inputArq, tempArq)
+    //parser.compileClass()
     compiler.compileClass()
 }
 
