@@ -18,7 +18,7 @@ enum class Command(val operator: String, val unary: Boolean){
     }
 }
 
-enum class Segment(val value: String){
+enum class Segment(val value: String) {
     CONST("constant"),
     ARG("argument"),
     LOCAL("local"),
@@ -30,7 +30,7 @@ enum class Segment(val value: String){
 
     companion object {
         fun find(kind: Kind): Segment {
-            return when(kind){
+            return when (kind) {
                 Kind.VAR -> LOCAL
                 Kind.ARG -> ARG
                 Kind.STATIC -> STATIC
@@ -39,8 +39,9 @@ enum class Segment(val value: String){
             }
         }
     }
+}
 
-    class VMWriter (private val outputFile: File){
+class VMWriter (private val outputFile: File){
         fun writePush(segment: Segment, index: Int){
             outputFile.writeWithBreakLine("push ${segment.value} $index")
         }
@@ -76,5 +77,5 @@ enum class Segment(val value: String){
         fun writeReturn(){
             outputFile.writeWithBreakLine("return")
         }
-    }
 }
+
